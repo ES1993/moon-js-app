@@ -32,14 +32,13 @@ test('test', () => {
 		}
 	};
 
-	const { init, conf } = mjsApp;
-	const { store } = conf;
-	mjsApp.init({
-		models: [m1],
-		onError:(e)=>{
-			console.log(e);
-		}
+	
+	mjsApp.models([m1]);
+	mjsApp.onError(e=>{
+		console.log(e);
 	});
+	mjsApp.start();
+
 	console.log(mjsApp.conf.store.getState());
 	mjsApp.conf.store.dispatch({ type: 'm1/list' });
 	console.log(mjsApp.conf.store.getState());

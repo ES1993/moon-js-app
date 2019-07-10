@@ -1,4 +1,3 @@
-
 import produce from 'immer';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
@@ -34,16 +33,19 @@ export const mjsApp = (function () {
     models: [loading],
   };
 
-  const init = (initConf) => {
-    let { plugin, models, onError } = initConf;
-    models || (models = []);
-    onError || (onError = () => { });
+  const models = (models) => conf.models = [...conf.models, ...models];
+
+  const plugins = () => { };
+
+  let cbError;
+  const onError = (func) => cbError=func;
+
+  const start = () => {
     const reducers = {}, effects = [];
-    conf.models = [...conf.models, ...models];
     conf.models.forEach(m => {
       handleModel(m);
       m.reducers && (reducers[m.name] = handleReducers(m.state || {}, m.reducers));
-      m.effects && (effects.push(handleEffects(m.effects, onError)));
+      m.effects && (effects.push(handleEffects(m.effects, cbError, loadingChange)));
     });
 
     const sagaMiddleware = createSagaMiddleware();
@@ -80,26 +82,29 @@ export const mjsApp = (function () {
     };
   };
 
-  const handleEffects = (effects, onError) => {
-    const sagas = Object.keys(effects).map(k => sagaEffects.takeEvery(k, handleSaga(k, effects[k], onError), sagaEffects));
+  const handleEffects = (effects, cbError, loadingChange) => {
+    const sagas = Object.keys(effects).map(k =>
+      sagaEffects.takeEvery(k,
+        handleSaga(k, effects[k], cbError, loadingChange),
+        sagaEffects));
     return function* () {
       yield sagaEffects.all(sagas);
     };
   };
 
-  const handleSaga = (type, effect, onError) => {
+  const handleSaga = (type, effect, cbError, loadingChange) => {
     return function* (sagaEffects, action) {
       const { call } = sagaEffects;
       try {
         yield call(loadingChange, type, true);
-        yield effect(sagaEffects, action); 
+        yield effect(sagaEffects, action);
       } catch (e) {
-        onError(e);
-      } finally{
+        cbError&&cbError(e);
+      } finally {
         yield call(loadingChange, type, false);
       }
     }
   };
 
-  return { conf, init };
+  return { conf, models, plugins, start, onError };
 })();
