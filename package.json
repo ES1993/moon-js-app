@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GS-LiuYang/moon-react.git"
+    "url": "git+https://github.com/GS-LiuYang/moon-js-app.git"
   },
   "keywords": [
     "react",
@@ -21,9 +21,9 @@
   "author": "moon1993 <18981810422@163.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/GS-LiuYang/moon-react/issues"
+    "url": "https://github.com/GS-LiuYang/moon-js-app/issues"
   },
-  "homepage": "https://github.com/GS-LiuYang/moon-react#readme",
+  "homepage": "https://github.com/GS-LiuYang/moon-js-app#readme",
   "devDependencies": {
     "@babel/core": "^7.5.0",
     "@babel/preset-env": "^7.5.0",
