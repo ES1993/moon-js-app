@@ -4,6 +4,9 @@ import createSagaMiddleware from 'redux-saga';
 import * as sagaEffects from 'redux-saga/effects';
 
 export const mjsApp = (function () {
+  const se=sagaEffects;
+  se.mSelect = (name) => se.select(s => s[name]);
+
   const loading = {
     name: 'loading',
     state: {
@@ -38,7 +41,7 @@ export const mjsApp = (function () {
   const plugins = () => { };
 
   let cbError;
-  const onError = (func) => cbError=func;
+  const onError = (func) => cbError = func;
 
   const start = () => {
     const reducers = {}, effects = [];
@@ -84,22 +87,22 @@ export const mjsApp = (function () {
 
   const handleEffects = (effects, cbError, loadingChange) => {
     const sagas = Object.keys(effects).map(k =>
-      sagaEffects.takeEvery(k,
+      se.takeEvery(k,
         handleSaga(k, effects[k], cbError, loadingChange),
-        sagaEffects));
+        se));
     return function* () {
-      yield sagaEffects.all(sagas);
+      yield se.all(sagas);
     };
   };
 
   const handleSaga = (type, effect, cbError, loadingChange) => {
-    return function* (sagaEffects, action) {
-      const { call } = sagaEffects;
+    return function* (se, action) {
+      const { call } = se;
       try {
         yield call(loadingChange, type, true);
-        yield effect(sagaEffects, action);
+        yield effect(se, action);
       } catch (e) {
-        cbError&&cbError(e);
+        cbError && cbError(e);
       } finally {
         yield call(loadingChange, type, false);
       }

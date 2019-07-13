@@ -22,8 +22,10 @@ test('test', () => {
 			},
 		},
 		effects: {
-			*list({call}) {
-				console.log("m1 list");
+			*list({call,mSelect}) {
+        console.log("m1 list");
+        const s=yield mSelect('m122');
+        console.log('333=',s);
 				yield call(this.fetch,"https://redux-saga-in-chinese.js.org/21");
 			},
 			*fetch() {
@@ -39,7 +41,6 @@ test('test', () => {
 	});
 	mjsApp.start();
 
-	console.log(mjsApp.conf.store.getState());
 	mjsApp.conf.store.dispatch({ type: 'm1/list' });
-	console.log(mjsApp.conf.store.getState());
+
 });
