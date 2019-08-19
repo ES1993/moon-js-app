@@ -1,6 +1,15 @@
-import { mjsApp } from '../src';
+import { mjsApp } from '../example';
 
 test('test', () => {
+  
+
+  const tempfun=()=>{
+    let temp=''
+    for(let i=0;i<1000000;i++){
+      temp+='qw'
+    }
+    return temp
+  };
 	const m1 = {
 		name: "m1",
 		state: {
@@ -22,15 +31,29 @@ test('test', () => {
 			},
 		},
 		effects: {
-			*list({call,mSelect}) {
+			*list(a,b) {
+        const {call,mSelect}=a;
         console.log("m1 list");
-        const s=yield mSelect('m122');
+        const s=yield mSelect('m');
         console.log('333=',s);
-				yield call(this.fetch,"https://redux-saga-in-chinese.js.org/21");
 			},
 			*fetch() {
 				console.log("m1 fetch");
-			}
+      },
+      *ly1({call}){
+       const re= yield call(tempfun);
+      //  console.log(re)
+        console.log("m1 ly1");
+      },
+      *ly2(){
+        console.log("m1 ly2");
+      },
+      *ly({mPut,take}){
+        yield mPut('m1/ly1');
+        yield take('m1/ly1/@@end');
+        yield mPut('m1/list');
+        yield mPut('m1/ly2');
+      }
 		}
 	};
 
@@ -41,6 +64,6 @@ test('test', () => {
 	});
 	mjsApp.start();
 
-	mjsApp.conf.store.dispatch({ type: 'm1/list' });
+	mjsApp.conf.store.dispatch({ type: 'm1/ly' });
 
 });

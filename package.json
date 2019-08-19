@@ -1,6 +1,6 @@
 {
   "name": "moon-js-app",
-  "version": "1.0.4",
+  "version": "1.0.9",
   "description": "Unified Development Model",
   "main": "lib/index.js",
   "scripts": {
